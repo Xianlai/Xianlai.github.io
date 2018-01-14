@@ -48,8 +48,8 @@ And at last we compare how different rental listing features like doorman, fitne
 [Jump to repository](https://github.com/Xianlai/online_news_popularity_classification)
 
 ![](imgs/confusion_histograms.png)
+![](imgs/performance_compares.png)
 
-## Abstract:
 Facilitated by the fast spreading and developing of internet and smart devices, how can we understand online news browsing data and find the pattern inside it become more and more important.
 
 In this project I am using online news popularity data set containing 39644 news articles and 57 features about each article including statistical features like number of words in title, rate of non-stop words in the content, article publish weekdays etc. and NLP features like positive word rate, title subjectivity level etc. The goal is to classify whether these articles are popular or not quantified by article shares. 
