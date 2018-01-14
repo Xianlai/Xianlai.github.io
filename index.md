@@ -43,8 +43,6 @@ Performing unsupervised clustering technique, the direct problem we are facing i
 
 And at last we compare how different rental listing features like doorman, fitness center, bedroom numbers etc affect the pattern of Manhattan apartment rental popularities.
 
-<img src="images/title_image.jpg" width="1200">
-
 
 # Online News Popularity Classification
 [Jump to repository](https://github.com/Xianlai/online_news_popularity_classification)
@@ -75,6 +73,7 @@ The main motivation of this project is not aiming at developing a new method or 
 
 
 ![](imgs\cover_tree_search.jpg)
+
 Searching is one of the most flexible way to deal with problem that can't be solved directly and exactly. By systematically exploring the state space, we will eventually reach the goal state we are looking for. If what we are interested is the path from initial state to goal state, then we need to save the states and orders we explored in a tree structure.
 
 This small project includes implementation of a general tree search algorithm module that can employ different searching strategies like depth-first search, iterative deepening search, A* search etc. and a visualization module that can visualize the result search tree nicely.
