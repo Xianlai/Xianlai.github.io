@@ -1,6 +1,7 @@
 # Streaming Tweets Feature Learning with Spark
+[Jupyter notebook](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/tweet_feature_learning_SparkStreaming.ipynb)
 
-[](https://github.com/Xianlai/streaming_tweet_feature_learning/tree/master/imgs/tweet_feature_learning.gif)
+![](https://github.com/Xianlai/streaming_tweet_feature_learning/tree/master/imgs/tweet_feature_learning.gif)
 
 ![](https://github.com/Xianlai/streaming_tweet_feature_learning/tree/master/imgs/logos.png)
 #### As the diagram showing above, this project implements a pipeline that learns predictive features from streaming tweets and visualizes the result in real-time.
