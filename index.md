@@ -47,6 +47,8 @@ And at last we compare how different rental listing features like doorman, fitne
 # Online News Popularity Classification
 [Jump to repository](https://github.com/Xianlai/online_news_popularity_classification)
 
+![](imgs/confusion_histograms.png)
+
 ## Abstract:
 Facilitated by the fast spreading and developing of internet and smart devices, how can we understand online news browsing data and find the pattern inside it become more and more important.
 
