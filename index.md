@@ -31,6 +31,8 @@
 # Mahattan Rental Apartment Clustering
 [Jump to repository](https://github.com/Xianlai/Manhattan_rental_apartment_clustering)
 
+![](imgs/title_image_apt_clustering.jpg)
+
 A city functions like a gigantic sophisticate network. Within it each buildings and blocks are connected by visible transportation systems and invisible functional dependencies. But on the other hand, the difference of locations and functionality also divides the city into many sub-areas. For different purposes, the boundaries of these sub-areas are different. Like for political administration, we have boroughs, community districts and neighbourhoods, and for postal service, we have zip codes. 
 
 In this projet, I would like to make use of rental apartment online listing dataset and new york building footprint dataset to explore the possible geographic boundaries or patterns of apartment rental market.
