@@ -260,7 +260,7 @@ Searching is one of the most flexible way to deal with problem that can't be sol
 
 This small project includes implementation of a general tree search algorithm module that can employ different searching strategies like depth-first search, iterative deepening search, A* search etc. and a visualization module that can visualize the result search tree nicely.
 
-![](imgs/cover_tree_search.jpg)
+![](imgs/cover_tree_search.png)
 
 Searching is one of the most flexible way to deal with problem that can't be solved directly and exactly. By systematically exploring the state space, we will eventually reach the goal state we are looking for. If what we are interested is the path from initial state to goal state, then we need to save the states and orders we explored in a tree structure.
 
