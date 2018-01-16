@@ -101,7 +101,7 @@ ___
 - **[Spark_AWS_cluster_guide.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_AWS_cluster_guide.md)**  
     This markdown file contains guiding steps on how to set up a AWS cluster and how to run Spark on it.
 
-- **[Spark_machine_learning_pipeline.ipynb](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_machine_learning_pipeline.ipynb)**   
+- **[Spark_machine_learning_pipeline.ipynb](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_machine_learning_pipeline.ipynb)**  
     This jupyter notebook implements an example using Spark machine learning API to classify whether online news are popular or not.
 
 
