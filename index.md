@@ -1,8 +1,9 @@
-# Contact
-Email: XianLaaai@gmail.com
-Cell: 01-917-593-3051
-Addr: 311 W 55th St, NYC, NY, 10019
-Resume: 
+# Contact   
+Email: XianLaaai@gmail.com   
+Cell: 01-917-593-3051   
+Addr: 311 W 55th St, NYC, NY, 10019   
+[Resume](https://github.com/Xianlai/Xianlai.github.io/blob/master/resume.md)  
+
 ___
 # Streaming Tweets Feature Learning with Spark
 [Jump to repository](https://github.com/Xianlai/streaming_tweet_feature_learning)
