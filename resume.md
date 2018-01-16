@@ -45,6 +45,9 @@ QGIS, Adobe Creative Suite 6
 ## Experience & Related Works
 
 **Personal Projects:**
+
+GitHub IO page: https://xianlai.github.io/
+
 - Learn features from tweets using Spark Streaming and visualize the results in real-time.    
     GitHub: https://github.com/Xianlai/streaming_tweet_feature_learning
 
