@@ -165,13 +165,13 @@ This project is consist of 2 parts:
         Since the listing dataset contains information about building properties like price, fitness centers, bedroom numbers etc, we can produce different subset of listing data and interpolate the building popularity from this subset and hence get a different clustering. (For example, if we want to compare the clustering of high-price rentals to that of low-price rentals, we can create 2 subsets, get 2 clusterings and compare the difference in final plottings.)
 
 ## Files:
-- **1_model selection.ipynb**:   
+- **[1_model selection.ipynb](https://github.com/Xianlai/Manhattan_rental_apartment_clustering/blob/master/1_model%20selection.ipynb)**     
     shows the process of clustering model selection
 
-- **2_clustering.ipynb**:   
+- **[2_clustering.ipynb](https://github.com/Xianlai/Manhattan_rental_apartment_clustering/blob/master/2_clustering.ipynb)**    
     shows the how to make use of clustering to query information we are interested in and compare clusterings with different apartment properties.
 
-- **interactive_clusters.py**:  
+- **[interactive_clusters.py](https://github.com/Xianlai/Manhattan_rental_apartment_clustering/blob/master/interactive_clusters.py)**    
     makes interactive plotting using bokeh server.
 
     Besides making static plotting, we can also query the clustering interactively with the help of bokeh server. Simply run `$ bokeh serve --show interactive_clusters.py` in the command line, the interactive plotting will be availabel at http://localhost:5006/, you can use web browser to play with it.
@@ -239,16 +239,16 @@ To limit the size of Jupyter notebooks, I split this project into 2 parts: prepr
 
 
 ## Files:
-- **0_Preprocessing.ipynb**:   
+- **[0_Preprocessing.ipynb](https://github.com/Xianlai/online_news_popularity_classification/blob/master/0_preprocessing.ipynb)**     
     This Jupyter notebook contains code preprocesses the original dataset.
 
-- **1_Model fitting and selection.ipynb**:   
+- **[1_Model fitting and selection.ipynb](https://github.com/Xianlai/online_news_popularity_classification/blob/master/1_model_fitting_and_selection.ipynb)**     
     This Jupyter notebook contains code fits different learning models on cleaned dataset and compares the learning results.
 
-- **modules/LearningPipe.py**:  
+- **[modules/LearningPipe.py](https://github.com/Xianlai/online_news_popularity_classification/blob/master/modules/LearningPipe.py)**  
     This python code implements a wrapper class based on several sklearn models to perform feature selection, grid searching, cross validation and evaluation jobs. It also provides methods to visualize parameter tuning and decision boundaries. 
 
-- **modules/Visual.py**:  
+- **[modules/Visual.py](https://github.com/Xianlai/online_news_popularity_classification/blob/master/modules/Visual.py)**  
     This python code implements visualization class for basic plotting jobs. Both python files are imported as modules in the Jupyter notebooks.
 
 
@@ -271,19 +271,19 @@ See [TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-
 
 
 ## Files
-- **TreeSearch.py**
+- **[TreeSearch.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch.py)**  
     This python script implements the general tree search algorithms. It includes the basic operations of tree search, like expand downward, trace backup etc, and different search strategies like BFS, DFS, A* etc. It should be used as parent class for specific problem instance.
 
-- **TreeVisual.py**
+- **[TreeVisual.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeVisual.py)**  
     This python script implements the class to visualize the result search tree. It includes the methods to parse the search tree in order to get plot data and the methods to plot the tree based on the attributes of its nodes like whether is goal node or whether is path. 
 
-- **TreeSearch_and_Visualization.ipynb**
+- **[TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch_and_Visualization.ipynb)**  
     This jupyter notebook contains the code illustrate how to use TreeSearch object and TreeVisual object to solve specific problem and visualize the result search tree.
 
-- **RoadtripProblem.py**
+- **[RoadtripProblem.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/RoadtripProblem.py)**  
     This python script implements an example problem of finding the best route in Romania to show the functions of its parent class--TreeSearch class.
 
-- **Documentations.md**
+- **[Documentations.md](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/Documentations.md)**  
     This markdown file contains the documentation of TreeSearch, TreeVisual and RoadtripProblem classes.
 
 
