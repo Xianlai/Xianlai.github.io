@@ -81,35 +81,35 @@ ___
 
 ## Files
 - **[tweet_feature_learning_SparkStreaming.ipynb](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_machine_learning_pipeline.ipynb)**
-
+     
     This jupyter notebook contains the code receiving tweets from socket, learn features and their stats and visualize selected tweets using learned features.
 
 - **[TweetsListener.py](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/TweetsListener.py)**
-
+     
     This python script pulls realtime tweets from tweepy API and forward it to the assigned TCP connect.(If you are not using docker container, you need to modify the IPaddress information in this file as well as in tweet_feature_learning_SparkStreaming.ipynb to make the streaming work.)
 
 - **[StreamingPlot.py](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/StreamingPlot.py)**
-
+       
     This python script implements the streaming plotting class which generate a scatter plotting and keeps updating the plotting with new plotting data source.
 
 - **[logs.txt](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/logs.txt)**
-
+            
     This text file is generated in tweet_feature_learning_SparkStreaming.ipynb to save intermediate and final analysis result.
 
 - **[Spark_overview.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_overview.md)**
-
+             
     This markdown file briefly introduces what is Spark and the functionalities of it.
 
 - **[Spark_installation_guide.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/pyspark_installation_guide.md)**
-
+           
     This markdown file contains guiding steps on how to install Spark, pyspark and how to run them either in the shell or as an application.
 
 - **[Spark_AWS_cluster_guide.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_AWS_cluster_guide.md)**
-
+          
     This markdown file contains guiding steps on how to set up a AWS cluster and how to run Spark on it.
 
 - **[Spark_machine_learning_pipeline.ipynb](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_machine_learning_pipeline.ipynb)**
-
+          
     This jupyter notebook implements an example using Spark machine learning API to classify whether online news are popular or not.
 
 
