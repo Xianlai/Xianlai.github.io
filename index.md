@@ -177,7 +177,7 @@ This project is consist of 2 parts:
     Besides making static plotting, we can also query the clustering interactively with the help of bokeh server. Simply run `$ bokeh serve --show interactive_clusters.py` in the command line, the interactive plotting will be availabel at http://localhost:5006/, you can use web browser to play with it.
 
 ___
-# [Online News Popularity Classification](https://github.com/Xianlai/online_news_popularity_classification)
+# Online News Popularity Classification
 [Jump to repository](https://github.com/Xianlai/online_news_popularity_classification)
 
 Facilitated by the fast spreading and developing of internet and smart devices, how can we understand online news browsing data and find the pattern inside it become more and more important.
@@ -230,7 +230,7 @@ To limit the size of Jupyter notebooks, I split this project into 2 parts: prepr
     ![](imgs/performance_compares.png)
 
     5. Compare the prediction "confidence" of classifiers by plotting the confusion histogram. This allows us further examine the behavior of classifiers and identify possible problems.
-    ![](imgs/title_image.png)
+    ![](imgs/title_image_onp.png)
 
 
 ## Files:
