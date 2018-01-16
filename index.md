@@ -196,8 +196,8 @@ To limit the size of Jupyter notebooks, I split this project into 2 parts: prepr
 
     1. Explore the statistical figures like mean, std, range, unique value/outlier counts and feature data types of dataset.
     
-    2. Clean the dataset by merging related binary features, standard scale features, remove outliers etc.
-    ![](imgs/feature_scales.png)
+    2. Clean the dataset by merging related binary features, standard scale features, remove outliers etc.   
+        ![](imgs/feature_scales.png)
 
     3. Using matrix decomposition methods to reduce dimensionality and  generate possibly more predictive feature spaces.
     
@@ -207,7 +207,8 @@ To limit the size of Jupyter notebooks, I split this project into 2 parts: prepr
         4. FactorAnalysis
         5. NMF
     
-    ![](imgs/scatter_plot.png)
+        ![](imgs/scatter_plot.png)
+
 
 - **Model fitting and selection**
 
@@ -221,16 +222,20 @@ To limit the size of Jupyter notebooks, I split this project into 2 parts: prepr
         6. XGBoost
 
     2. Visualize the results of parameter tunning to observe how each of the parameters changed the model's behavior on this dataset.
-    ![](imgs/parallel_coordinates.png)
+    
+        ![](imgs/parallel_coordinates.png)
 
     3. Visualize the decision boundaries to tell how classifiers adapt themselves on this dataset and identify possible problems.
-    ![](imgs/decision_boundaries.png)
+    
+        ![](imgs/decision_boundaries.png)
 
     4. Evaluate and compare the performance of classifiers under different spaces using expected loss which considers both model flexibility and steadiness.
-    ![](imgs/performance_compares.png)
+        
+        ![](imgs/performance_compares.png)
 
     5. Compare the prediction "confidence" of classifiers by plotting the confusion histogram. This allows us further examine the behavior of classifiers and identify possible problems.
-    ![](imgs/title_image_onp.png)
+        
+        ![](imgs/title_image_onp.png)
 
 
 ## Files:
