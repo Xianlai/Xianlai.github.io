@@ -1,4 +1,4 @@
-Xian Lai
+Last updated at March-08-2018
 
 # Contact   
 Email: XianLaaai@gmail.com   
@@ -268,6 +268,29 @@ Tree search is one of the most flexible ways to deal with problems that can’t 
 
 ![](imgs/cover_tree_search.png)
 
+## Modules
+### A. Tree Search:
+The tree search operations like expand node, evaluate state, append new nodes to tree as well as searching strategies like depth first search, breath first search etc. are implemented in the module TreeSearch which is used as the parent class of specific problem. It requires its children class instance to have the following methods:
+
+```
+- ProblemInstance._transition(state) 
+    The transition model takes in state and return possible actions, result states and corresponding step costs.
+
+- ProblemInstance._heuristicCost(state) 
+    Calculate and return the heuristic cost given a state.
+
+- ProblemInstance._isGoal(state) 
+    Check whether given state is goal state or one of goal states.
+```
+
+### B.Tree Visualization:
+In the visualization of result search tree, we use the polar coordinate system inspired by the following ideas:
+
+1. As the search tree goes deeper, there are usually more nodes and thus requires more space. The polar coordinate system suits this need with increasing perimenter. So it’s more space efficient for showing the tree structure.
+
+2. Each path from initial node to end node more or less forms a straight line. Thus it’s easier to identify the path and compare between different paths.
+
+
 ## How to use the modules
 This package can be used through following API calls:
 ```
@@ -297,6 +320,8 @@ See [TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-
 
 - **[RoadtripProblem.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/RoadtripProblem.py)**  
     This python script implements an example problem of finding the best route in Romania to show the functions of its parent class--TreeSearch class.
+
+![](imgs/breadth_first_search_light_background.png)
 
 
 
