@@ -1,3 +1,5 @@
+Xian Lai
+
 # Contact   
 Email: XianLaaai@gmail.com   
 Cell: 01-917-593-3051   
@@ -262,31 +264,41 @@ ___
 # General Tree Search and Visualization
 [Jump to repository](https://github.com/Xianlai/Tree-Search-and-Visualization)
 
-Searching is one of the most flexible way to deal with problem that can't be solved directly and exactly. By systematically exploring the state space, we will eventually reach the goal state we are looking for. If what we are interested is the path from initial state to goal state, then we need to save the states and orders we explored in a tree structure.
-
-This small project includes implementation of a general tree search algorithm module that can employ different searching strategies like depth-first search, iterative deepening search, A* search etc. and a visualization module that can visualize the result search tree nicely.
+Tree search is one of the most flexible ways to deal with problems that can’t be solved directly and exactly. And an intuitive visualization of the paths found can certainly help us improve both the understanding of problem and solutions. This project implements a Python package that contains general tree search algorithms and result visualizaitons.
 
 ![](imgs/cover_tree_search.png)
 
 ## How to use the modules
+This package can be used through following API calls:
+```
+- ProblemInstance.breadthFirstSearch(maxNodes, maxLayers)  
+- ProblemInstance.aStarSearch(maxNodes, maxLayers)  
+- other search strategies...  
+
+- ProblemInstance.plot_tree(diameter, background, title, ls, a)  
+- ProblemInstance.print_paths()  
+- ProblemInstance.export()  
+```
 See [TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch_and_Visualization.ipynb) for usage examples.
 
 
 ## Files
+- **[TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch_and_Visualization.ipynb)**  
+    This jupyter notebook contains the code illustrate how to use TreeSearch object and TreeVisual object to solve specific problem and visualize the result search tree.
+
+- **[Documentations.md](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/Documentations.md)**  
+    This markdown file contains the documentation of TreeSearch, TreeVisual and RoadtripProblem classes.
+
 - **[TreeSearch.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch.py)**  
     This python script implements the general tree search algorithms. It includes the basic operations of tree search, like expand downward, trace backup etc, and different search strategies like BFS, DFS, A* etc. It should be used as parent class for specific problem instance.
 
 - **[TreeVisual.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeVisual.py)**  
     This python script implements the class to visualize the result search tree. It includes the methods to parse the search tree in order to get plot data and the methods to plot the tree based on the attributes of its nodes like whether is goal node or whether is path. 
 
-- **[TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch_and_Visualization.ipynb)**  
-    This jupyter notebook contains the code illustrate how to use TreeSearch object and TreeVisual object to solve specific problem and visualize the result search tree.
-
 - **[RoadtripProblem.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/RoadtripProblem.py)**  
     This python script implements an example problem of finding the best route in Romania to show the functions of its parent class--TreeSearch class.
 
-- **[Documentations.md](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/Documentations.md)**  
-    This markdown file contains the documentation of TreeSearch, TreeVisual and RoadtripProblem classes.
+
 
 
 
