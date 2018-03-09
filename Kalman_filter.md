@@ -1,52 +1,27 @@
 # Filters and Kalman Filter
 
 ### What are filters?
-Filters are a kind of network models that incorporate the **certainty and uncertainty** of our **belief and observation** for a dynamic system in a sequence of time steps. 
+Filters are a kind of network models that incorporate the **certainty(our knowledge) and uncertainty(the noise in real world)** of our **belief and observation** for a dynamic system in a sequence of time steps. 
 
 ### What are filters used for?
-For a dynamic system, if we are confident about our knowledge, we can simply predict the state in any time step. Or if we are confident about the observations, we can simply update the system state in any time step after we receive observations. But the real world is complex, we usually don't have full knowledge of the target system and the observation usually have certain amount of noise. So we need a way to incorporate our knowledge and observation in history time steps as much as possible. This is where we use filters.
+For a dynamic system, if we are 100% confident about our knowledge, we can simply predict the state in any time step. Or if we are 100% confident about the observations, we can simply calculate the system state in any time step based on observations. 
+
+But the real world is complex, we usually don't have full knowledge of the system and the observations usually contain certain amount of noise. So we need a way to incorporate our knowledge and observation in all time steps as much as possible. This is where we use filters.
 
 ### How do filters work?
 The generic framework of a filter follows these steps:
 
-1. **Guess** a initial system state. Because we are not a hundred percent confident about our guess, we use a probability distribution to represent our belief;
+1. **Guess** a initial system state. Because we are not 100% confident about our guess, we use a probability distribution to represent our belief;
 2. **Receive** the observation at this time step --again this observation is uncertain, we use probability distribution to represent it-- and **combine** (*take a value between*) the information in our prediction and observation and update the system state at this time step(we are gaining information coming from observation);
 3. **Guess** the state in next time step using our knowledge of this system. Because we are uncertain about our knowledge of this system, the uncertainty adds up. In other words, we are losing the confidence or information;
 4. **Repeat** step 2-3 for following time steps.
 
-The essence of filter is the combination of prediction and measurement. It is a weighted average of these 2 values. If we are more confident about our prediction, then the new value will be closer to our prediction value. If we are more confident about observation, then the new value bias toward observed value. 
+**The essence of filter is the combination of prediction and measurement, which is a weighted average of these 2 values.** If we are more confident about our prediction, then the new value will be closer to our prediction value. If we are more confident about observation, then the new value bias toward observed value. 
 
 ![](/Users/LAI/Documents/data_science/projects/wip/taxi_trip_pattern_learning/_documents/imgs/network.png)
 
 
-### From a probability point of view:
-
-1. Guess the prior probability distribution of system state at $t_0$: 
-
-    $$P(\bar{x}_0)$$   
-
-2. Receive observation $prob(z_0)$ at $t_0$ and combine this observation as a posterior probability distribution with our guess using Bayesian theorem:  
-
-    $$
-    \begin{aligned}
-        P(\hat{x}_0) 
-        & = P(x_0|z_0) \\
-        & = \lVert P(z_0|\bar{x}_0)P(\bar{x}_0) \rVert
-    \end{aligned}
-    $$
-      
-3. Guess the prior probability distribution of system state at $t_1$: 
-
-    $$P(\bar{x}_1) = \sum_{\hat{x}_0}(P(\bar{x}_1|\hat{x}_0)P(\hat{x}_0))$$
-    
-4. Repeat step 2-3 for following time steps.
-
-Note that the conditional probability $P(z_0|\bar{x}_0)$ contains the knowledge of how system state generate observations(sensor model). It includes both situations when the observations are directly measurement of system state and when they are not(they are actually measurements of a related but different state).
-
-And the conditional probability $P(\bar{x}_t|\hat{x}_{t-1})$ contains the knowledge of how system state evolve to next state(transition model).
-
-
-### Variables names:
+### Common variables names used in literature:
 
 - $x_t$: actual state value at time t  
 - $\bar{x}_t$: state prior probability distribution at time t  
@@ -69,11 +44,41 @@ And the conditional probability $P(\bar{x}_t|\hat{x}_{t-1})$ contains the knowle
 - $H$: sensor model
 
 
+### From a probabilistic point of view:
+
+1. Guess the prior probability distribution of system state at $t_0$: 
+
+    $$P(\bar{x}_0)$$   
+
+2. Receive observation $prob(z_0)$ at $t_0$ and combine this observation as a posterior probability distribution with our guess using Bayesian theorem:  
+
+    $$
+    \begin{aligned}
+        P(\hat{x}_0) 
+        & = P(x_0|z_0)\\
+        & = \frac{P(z_0|\bar{x}_0)P(\bar{x}_0)}{P(z_0)}\\
+        & = \frac{P(z_0|\bar{x}_0)P(\bar{x}_0)}
+            {\sum_{\bar{x}_0} P(z_0, \bar{x}_0)}
+    \end{aligned}
+    $$
+
+
+3. Guess the prior probability distribution of system state at $t_1$: 
+
+    $$P(\bar{x}_1) = \sum_{\hat{x}_0}(P(\bar{x}_1|\hat{x}_0)P(\hat{x}_0))$$
+    
+4. Repeat step 2-3 for following time steps.
+
+Note that the conditional probability $P(z_0|\bar{x}_0)$ contains the knowledge of how system state generate observations(sensor model). It includes both situations when the observations are directly measurement of system state and when they are not(they are actually measurements of a related but different state).
+
+And the conditional probability $P(\bar{x}_t|\hat{x}_{t-1})$ contains the knowledge of how system state evolve to next state(transition model).
+
+
+
+
+
 ### *Addition and Multiplication of probability distributions:
-
-We know that addtion of probabilities means the probability of one event happends after another independent event, while multiplication of probabilities means the probability of 2 independent events happen together.
-
-**But what does addtion and multiplication of probability distributions mean?**  
+  
 Both addtion and multiplication only fit the case when random variables are continuous.
 
 - **Addition**:[Wikipedia](https://en.wikipedia.org/wiki/Convolution_of_probability_distributions)
