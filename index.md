@@ -324,6 +324,206 @@ See [TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-
 ![](imgs/breadth_first_search_light_background.png)
 
 
+# Filters and Kalman Filter learning notes
+
+### What are filters?
+Filters are a kind of network models that incorporate the **certainty(our knowledge) and uncertainty(the noise in real world)** of our **belief and observation** for a dynamic system in a sequence of time steps. 
+
+### What are filters used for?
+For a dynamic system, if we are 100% confident about our knowledge, we can simply predict the state in any time step. Or if we are 100% confident about the observations, we can simply calculate the system state in any time step based on observations. 
+
+But the real world is complex, we usually don't have full knowledge of the system and the observations usually contain certain amount of noise. So we need a way to incorporate our knowledge and observations in all time steps as much as possible. This is where we use filters.
+
+### How do filters work?
+The generic framework of a filter follows these steps:
+
+1. **Guess** a initial system state. Because we are not 100% confident about our guess, we use a probability distribution to represent our belief;
+2. **Receive** the observation at this time step --again this observation is uncertain, we use probability distribution to represent it-- and **combine** (*take a value between*) the information in our prediction and observation and update the system state at this time step(we are gaining information coming from observation);
+3. **Guess** the state in next time step using our knowledge of this system. Because we are uncertain about our knowledge of this system, the uncertainty adds up. In other words, we are losing the confidence or information;
+4. **Repeat** step 2-3 for following time steps.
+
+**The essence of filter is the combination of prediction and measurement, which is a weighted average of these 2 values.** If we are more confident about our prediction, then the new value will be closer to our prediction value. If we are more confident about observation, then the new value bias toward observed value. 
+
+![](imgs/network.png)
+
+
+### Common variables names used in literature:
+
+- ![x_t](https://latex.codecogs.com/gif.latex?x_t): actual state value at time t  
+- ![\bar{x}_t](https://latex.codecogs.com/gif.latex?\bar{x}_t): state prior probability distribution at time t  
+- ![\hat{x}_t](https://latex.codecogs.com/gif.latex?\hat{x}_t): state posterior probability distribution at time t   
+
+
+- ![z_t](https://latex.codecogs.com/gif.latex?z_t): actual observed value at time t  
+- ![\bar{z}_t](https://latex.codecogs.com/gif.latex?\bar{z}_t): prior probability distribution of observed variable predicted from ![\bar{x}_t](https://latex.codecogs.com/gif.latex?\bar{x}_t)  
+- ![\hat{z}_t](https://latex.codecogs.com/gif.latex?\hat{z}_t): posterior probability distribution of observed variable given ![z_t](https://latex.codecogs.com/gif.latex?z_t)
+
+
+- ![P_t](https://latex.codecogs.com/gif.latex?P_t): state variance, which is increasing in prediction step and decreaasing in update step. 
+    + ![\bar{P}_t](https://latex.codecogs.com/gif.latex?\bar{P}_t): the prior state variance
+    + ![\hat{P}_t](https://latex.codecogs.com/gif.latex?\hat{P}_t): the posterior state variance
+- ![Q](https://latex.codecogs.com/gif.latex?Q): process noise, part of transition model, which typically won't change.  
+- ![R](https://latex.codecogs.com/gif.latex?R): measure noise, part of sensor model, which typically won't change.  
+
+
+- ![F](https://latex.codecogs.com/gif.latex?F): transition model
+- ![H](https://latex.codecogs.com/gif.latex?H): sensor model
+
+
+### From a probabilistic point of view:
+
+1. Guess the prior probability distribution of system state at <img src="https://latex.codecogs.com/gif.latex?$t_0$" title="$t_0$" />:
+
+    <img src="https://latex.codecogs.com/gif.latex?P(\bar{x}_0)" title="P(\bar{x}_0)" />
+
+2. Receive observation <img src="https://latex.codecogs.com/gif.latex?P(z_0)" title="P(z_0)" /> at <img src="https://latex.codecogs.com/gif.latex?$t_0$" title="$t_0$" /> and combine this observation as a posterior probability distribution with our guess using Bayesian theorem:  
+
+    <img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;P(\hat{x}_0)&space;&&space;=&space;P(x_0|z_0)\\&space;&&space;=&space;\frac{P(z_0|\bar{x}_0)P(\bar{x}_0)}{P(z_0)}\\&space;&&space;=&space;\frac{P(z_0|\bar{x}_0)P(\bar{x}_0)}&space;{\sum_{\bar{x}_0}&space;P(z_0,&space;\bar{x}_0)}&space;\end{aligned}" title="\begin{aligned} P(\hat{x}_0) & = P(x_0|z_0)\\ & = \frac{P(z_0|\bar{x}_0)P(\bar{x}_0)}{P(z_0)}\\ & = \frac{P(z_0|\bar{x}_0)P(\bar{x}_0)} {\sum_{\bar{x}_0} P(z_0, \bar{x}_0)} \end{aligned}" />
+
+3. Guess the prior probability distribution of system state at <img src="https://latex.codecogs.com/gif.latex?$t_1$" title="$t_1$" />: 
+
+    <img src="https://latex.codecogs.com/gif.latex?P(\bar{x}_1)&space;=&space;\sum_{\hat{x}_0}(P(\bar{x}_1|\hat{x}_0)P(\hat{x}_0))" title="P(\bar{x}_1) = \sum_{\hat{x}_0}(P(\bar{x}_1|\hat{x}_0)P(\hat{x}_0))" />
+    
+4. Repeat step 2-3 for following time steps.
+
+Note that the conditional probability <img src="https://latex.codecogs.com/gif.latex?P(z_0|\bar{x}_0)" title="P(z_0|\bar{x}_0)" /> contains the knowledge of how system state generate observations(sensor model). It includes both situations when the observations are directly measurement of system state and when they are not(they are actually measurements of a related but different state).
+
+And the conditional probability <img src="https://latex.codecogs.com/gif.latex?P(\bar{x}_t|\hat{x}_{t-1})" title="P(\bar{x}_t|\hat{x}_{t-1})" /> contains the knowledge of how system state evolve to next state(transition model).
+
+
+### *Addition and Multiplication of probability distributions:
+
+- **Addition**:[Wikipedia](https://en.wikipedia.org/wiki/Convolution_of_probability_distributions)
+
+    It means when 2 values adding up(<img src="https://latex.codecogs.com/gif.latex?$Z&space;=&space;X&space;&plus;&space;Y$" title="$Z = X + Y$" />), if X has probability distribution <img src="https://latex.codecogs.com/gif.latex?$P(X)$" title="$P(X)$" /> and Y has probability distribution <img src="https://latex.codecogs.com/gif.latex?$P(Y)$" title="$P(Y)$" />, then Z has probability distribution <img src="https://latex.codecogs.com/gif.latex?$P(Z)$" title="$P(Z)$" /> which is the convolution of <img src="https://latex.codecogs.com/gif.latex?$P(X)$" title="$P(X)$" /> and <img src="https://latex.codecogs.com/gif.latex?$P(Y)$" title="$P(Y)$" />.
+
+    <img src="https://latex.codecogs.com/gif.latex?P(Z=z)&space;=&space;\int_{-\infty}^{\infty}&space;P(X&space;=&space;x)P(Y&space;=&space;z-x)&space;dx" title="P(Z=z) = \int_{-\infty}^{\infty} P(X = x)P(Y = z-x) dx" />
+    
+- **Multiplicaiton**: [Wikipedia](https://en.wikipedia.org/wiki/Product_distribution)   
+
+    Similar, if X and Y are two independent, continuous random variables, described by probability density functions $P(X)$ and $P(Y)$ then the probability density function of $Z = XY$ is:
+
+    <img src="https://latex.codecogs.com/gif.latex?P(Z=z)&space;=&space;\int_{-\infty}^{\infty}&space;P(X&space;=&space;x)&space;P(Y&space;=&space;\frac{z}{x})&space;\frac{1}{\lvert&space;x&space;\rvert}&space;dx" title="P(Z=z) = \int_{-\infty}^{\infty} P(X = x) P(Y = \frac{z}{x}) \frac{1}{\lvert x \rvert} dx" />
+
+#### Addtion and Multiplication of Gaussian distributions
+Fortunately, the addition and multiplicaiton of Gaussian distributions are quite easy:
+
+- **Addition**:
+
+    <img src="https://latex.codecogs.com/gif.latex?\mathcal{N}(\mu_1,&space;\sigma_1^2)&space;&plus;&space;\mathcal{N}(\mu_2,&space;\sigma_2^2)&space;=&space;\mathcal{N}(\mu_1&space;&plus;&space;\mu_2,&space;\sigma_1^2&space;&plus;&space;\sigma_2^2)" title="\mathcal{N}(\mu_1, \sigma_1^2) + \mathcal{N}(\mu_2, \sigma_2^2) = \mathcal{N}(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2)" />
+
+    
+    
+- **Linear transformation**:    
+    We can treat this as addtion multiple times.
+
+    <img src="https://latex.codecogs.com/gif.latex?a\mathcal{N}(\mu,&space;\sigma^2)&space;&plus;&space;b&space;=&space;\mathcal{N}(a\mu&space;&plus;&space;b,&space;a^2\sigma^2)" title="a\mathcal{N}(\mu, \sigma^2) + b = \mathcal{N}(a\mu + b, a^2\sigma^2)" />
+
+- **Multiplication**:
+    
+    <img src="https://latex.codecogs.com/gif.latex?\mathcal{N}(\mu_1,&space;\sigma_1^2)&space;*&space;\mathcal{N}(\mu_2,&space;\sigma_2^2)&space;=&space;\mathcal{N}(&space;\frac{\sigma_2^2\mu_1&space;&plus;&space;\sigma_1^2\mu_2}{\sigma_1^2&space;&plus;&space;\sigma_2^2},&space;\frac{\sigma_1^2&space;\sigma_2^2}{\sigma_1^2&space;&plus;&space;\sigma_2^2})" title="\mathcal{N}(\mu_1, \sigma_1^2) * \mathcal{N}(\mu_2, \sigma_2^2) = \mathcal{N}( \frac{\sigma_2^2\mu_1 + \sigma_1^2\mu_2}{\sigma_1^2 + \sigma_2^2}, \frac{\sigma_1^2 \sigma_2^2}{\sigma_1^2 + \sigma_2^2})" />
+
+
+## What is Kalman filter?
+
+Kalman filters are a special kind of filters which parameterize the previous probability distribution as Gaussian distributions: we assume next state is a linear transformation of previous state add Gaussian noise: 
+
+<img src="https://latex.codecogs.com/gif.latex?x_{t&plus;1}&space;=&space;Fx_t&space;&plus;&space;w,&space;w&space;\sim&space;\mathcal{N}(0,&space;Q)" title="x_{t+1} = Fx_t + w, w \sim \mathcal{N}(0, Q)" />
+
+equivalently 
+<img src="https://latex.codecogs.com/gif.latex?P(x_{t&plus;1}|x_t)&space;=&space;\mathcal{N}(Fx_t,&space;Q)" title="P(x_{t+1}|x_t) = \mathcal{N}(Fx_t, Q)" />
+
+
+### In cases where observations are directly measures of system state:
+We have observed variable:
+
+<img src="https://latex.codecogs.com/gif.latex?$$z_t&space;=&space;x_t&space;&plus;&space;v,&space;v&space;\sim&space;\mathcal{N}(0,&space;R)$$" title="$$z_t = x_t + v, v \sim \mathcal{N}(0, R)$$" />
+
+equivalently 
+
+<img src="https://latex.codecogs.com/gif.latex?$$P(z_t|x_t)&space;=&space;\mathcal{N}(x_t,&space;R)$$" title="$$P(z_t|x_t) = \mathcal{N}(x_t, R)$$" />
+
+**Prior State**:
+
+<img src="https://latex.codecogs.com/gif.latex?$$&space;P(\bar{x}_t)&space;\sim&space;\mathcal{N}(\bar{x}_t,&space;\bar{P}_t)&space;$$" title="$$ P(\bar{x}_t) \sim \mathcal{N}(\bar{x}_t, \bar{P}_t) $$" /> 
+
+**FORWARD Update**:
+
+<img src="https://latex.codecogs.com/gif.latex?$$\begin{aligned}&space;P(\hat{x}_t)&space;\sim&space;\mathcal{N}(\hat{x}_t,&space;\hat{P}_t)&space;&&space;=&space;P(z|\bar{x}_t,&space;R)&space;\mathcal{N}(\bar{x}_t,&space;\bar{P}_t)&space;&&&space;(1)&space;\\&space;&&space;=&space;P(\bar{x}_t|z,&space;R)&space;\mathcal{N}(\bar{x}_t,&space;\bar{P}_t)&space;&&&space;(2)&space;\\&space;&&space;=&space;\mathcal{N}(z_t,&space;R)&space;\mathcal{N}(\bar{x}_t,&space;\bar{P}_t)&space;\\&space;&&space;=&space;\mathcal{N}(&space;\frac{\bar{P}_t&space;z_t&space;&plus;&space;R&space;\bar{x}_t}{\bar{P}_t&space;&plus;&space;R},&space;\frac{\bar{P}_t&space;R}{\bar{P}_t&space;&plus;&space;R})&space;\\&space;&&space;=&space;\mathcal{N}(&space;\frac{\bar{P}_t}{\bar{P}_t&space;&plus;&space;R}&space;z_t&space;&plus;&space;\frac{R}{\bar{P}_t&space;&plus;&space;R}\bar{x}_t,&space;\frac{\bar{P}_t&space;R}{\bar{P}_t&space;&plus;&space;R})&space;\\&space;&&space;=&space;\mathcal{N}(K&space;z_t&space;&plus;&space;(I-K)\bar{x}_t,&space;KR)&space;\\&space;&&space;=&space;\mathcal{N}(\bar{x}_t&space;&plus;&space;K(z_t&space;-&space;\bar{x}_t),&space;KR)&space;\\&space;\end{aligned}$$" title="$$\begin{aligned} P(\hat{x}_t) \sim \mathcal{N}(\hat{x}_t, \hat{P}_t) & = P(z|\bar{x}_t, R) \mathcal{N}(\bar{x}_t, \bar{P}_t) && (1) \\ & = P(\bar{x}_t|z, R) \mathcal{N}(\bar{x}_t, \bar{P}_t) && (2) \\ & = \mathcal{N}(z_t, R) \mathcal{N}(\bar{x}_t, \bar{P}_t) \\ & = \mathcal{N}( \frac{\bar{P}_t z_t + R \bar{x}_t}{\bar{P}_t + R}, \frac{\bar{P}_t R}{\bar{P}_t + R}) \\ & = \mathcal{N}( \frac{\bar{P}_t}{\bar{P}_t + R} z_t + \frac{R}{\bar{P}_t + R}\bar{x}_t, \frac{\bar{P}_t R}{\bar{P}_t + R}) \\ & = \mathcal{N}(K z_t + (I-K)\bar{x}_t, KR) \\ & = \mathcal{N}(\bar{x}_t + K(z_t - \bar{x}_t), KR) \\ \end{aligned}$$" />
+
+where
+
+<img src="https://latex.codecogs.com/gif.latex?K&space;=&space;\frac{\bar{P}_t}{\bar{P}_t&space;&plus;&space;R}" title="K = \frac{\bar{P}_t}{\bar{P}_t + R}" />
+
+\* (1): here the likelihood <img src="https://latex.codecogs.com/gif.latex?P(z|\bar{x}_t,&space;R)" title="P(z|\bar{x}_t, R)" /> use sensor noise  
+\* (2): <img src="https://latex.codecogs.com/gif.latex?P(z|\bar{x}_t,&space;R)&space;=&space;P(\bar{x}_t|z,&space;R)" title="P(z|\bar{x}_t, R) = P(\bar{x}_t|z, R)" /> because <img src="https://latex.codecogs.com/gif.latex?d(\bar{x}_t,z_t)&space;=&space;d(z_t,&space;\bar{x}_t)" title="d(\bar{x}_t,z_t) = d(z_t, \bar{x}_t)" />
+
+
+**FORWARD Predict**:
+
+<img src="https://latex.codecogs.com/gif.latex?$$\begin{aligned}&space;P(\bar{x}_{t&plus;1})&space;\sim&space;\mathcal{N}(\bar{x}_{t&plus;1},&space;\bar{P}_{t&plus;1})&space;&&space;=&space;\int_{\hat{x}_t}&space;P(\bar{x}_{t&plus;1}|\hat{x}_t)&space;P(\hat{x}_t)&space;d\hat{x}_t\\&space;&&space;=&space;\int_{\hat{x}_t}&space;P(\bar{x}_{t&plus;1}|F\hat{x}_t)&space;P(F\hat{x}_t)&space;d\hat{x}_t&space;&&&space;(1)\\&space;&&space;=&space;\int_{\hat{x}_t}&space;\mathcal{N}(\bar{x}_{t&plus;1};&space;F&space;x'_t,&space;Q)&space;\mathcal{N}(F&space;x'_t;&space;F\hat{x}_t,&space;F\hat{P}_t&space;F^\intercal&space;)&space;d\hat{x}_t&space;&&&space;(2)\\&space;&&space;=&space;\int_{\hat{x}_t}&space;\mathcal{N}(\bar{x}_{t&plus;1}&space;-&space;F&space;x'_t;&space;0,&space;Q)&space;\mathcal{N}(F&space;x'_t;&space;F\hat{x}_t,&space;F&space;\hat{P}_t&space;F^\intercal)&space;d\hat{x}_t&space;&&&space;(3)\\&space;&&space;=&space;\mathcal{N}(\bar{x}_{t&plus;1};&space;F\hat{x}_t,&space;F&space;\hat{P}_t&space;F^\intercal&space;&plus;&space;Q)&&&space;(4)\\&space;\end{aligned}$$" title="$$\begin{aligned} P(\bar{x}_{t+1}) \sim \mathcal{N}(\bar{x}_{t+1}, \bar{P}_{t+1}) & = \int_{\hat{x}_t} P(\bar{x}_{t+1}|\hat{x}_t) P(\hat{x}_t) d\hat{x}_t\\ & = \int_{\hat{x}_t} P(\bar{x}_{t+1}|F\hat{x}_t) P(F\hat{x}_t) d\hat{x}_t && (1)\\ & = \int_{\hat{x}_t} \mathcal{N}(\bar{x}_{t+1}; F x'_t, Q) \mathcal{N}(F x'_t; F\hat{x}_t, F\hat{P}_t F^\intercal ) d\hat{x}_t && (2)\\ & = \int_{\hat{x}_t} \mathcal{N}(\bar{x}_{t+1} - F x'_t; 0, Q) \mathcal{N}(F x'_t; F\hat{x}_t, F \hat{P}_t F^\intercal) d\hat{x}_t && (3)\\ & = \mathcal{N}(\bar{x}_{t+1}; F\hat{x}_t, F \hat{P}_t F^\intercal + Q)&& (4)\\ \end{aligned}$$" />
+
+\* (1): after linear transformation  
+\* (2): where <img src="https://latex.codecogs.com/gif.latex?x_t'" title="x_t'" /> is a value at time t  
+\* (3): move first Gaussian to original to match the convolution equation  
+\* (4): and the convolution of 2 Gaussians is the addtion of them   
+
+### In cases where observations are NOT directly measured on system state:
+
+We assume observation <img src="https://latex.codecogs.com/gif.latex?z_t" title="z_t" /> is a linear transformation of state <img src="https://latex.codecogs.com/gif.latex?x_t&space;:&space;z_t&space;=&space;Hx_t" title="x_t : z_t = Hx_t" />. So we need to adjust the forward update function:
+
+**The prior distribution of observed variable** <img src="https://latex.codecogs.com/gif.latex?\bar{z}_t" title="\bar{z}_t" />:
+
+<img src="https://latex.codecogs.com/gif.latex?P(\bar{z}_t)&space;=&space;\mathcal{N}(H\bar{x}_t,&space;H\bar{P}_tH^\intercal)" title="P(\bar{z}_t) = \mathcal{N}(H\bar{x}_t, H\bar{P}_tH^\intercal)" />
+
+
+And the **likelihood**:
+
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;P(z_t|\bar{z}_t)&space;&&space;=&space;\mathcal{N}(z_t;&space;\bar{z}_t,&space;R)\\&space;&&space;=&space;\mathcal{N}(z_t;&space;H\bar{x}_t,&space;R)\\&space;&&space;=&space;\mathcal{N}(H\bar{x}_t;&space;z_t,&space;R)\\&space;&&space;=&space;\mathcal{N}(z_t,&space;R)&space;\end{aligned}" title="\begin{aligned} P(z_t|\bar{z}_t) & = \mathcal{N}(z_t; \bar{z}_t, R)\\ & = \mathcal{N}(z_t; H\bar{x}_t, R)\\ & = \mathcal{N}(H\bar{x}_t; z_t, R)\\ & = \mathcal{N}(z_t, R) \end{aligned}" />
+
+
+Thus we can calculate the **posterior observed variable distribution**:
+
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;P(\hat{z}_t)&space;&&space;=&space;P(\bar{z}_t)&space;P(z_t|\bar{z}_t)\\&space;&&space;=&space;\mathcal{N}(H\bar{x}_t,&space;H&space;\bar{P}_t&space;H^\intercal)&space;\mathcal{N}(z_t,&space;R)\\&space;&&space;=&space;\mathcal{N}(&space;\frac{R&space;H\bar{x}_t&space;&plus;&space;H&space;\bar{P}_t&space;H^\intercal&space;z_t}{H&space;\bar{P}_t&space;H^\intercal&space;&plus;&space;R},&space;\frac{H&space;\bar{P}_t&space;H^\intercal&space;R}{H&space;\bar{P}_t&space;H^\intercal&space;&plus;&space;R}&space;)&space;\end{aligned}" title="\begin{aligned} P(\hat{z}_t) & = P(\bar{z}_t) P(z_t|\bar{z}_t)\\ & = \mathcal{N}(H\bar{x}_t, H \bar{P}_t H^\intercal) \mathcal{N}(z_t, R)\\ & = \mathcal{N}( \frac{R H\bar{x}_t + H \bar{P}_t H^\intercal z_t}{H \bar{P}_t H^\intercal + R}, \frac{H \bar{P}_t H^\intercal R}{H \bar{P}_t H^\intercal + R} ) \end{aligned}" />
+
+
+Because <img src="https://latex.codecogs.com/gif.latex?$P(\hat{z}_t)&space;\sim&space;\mathcal{N}(H\hat{x}_t,&space;H\hat{P}_tH^\intercal)$" title="$P(\hat{z}_t) \sim \mathcal{N}(H\hat{x}_t, H\hat{P}_tH^\intercal)$" />,
+
+<img src="https://latex.codecogs.com/gif.latex?$$&space;H\hat{x}_t&space;=&space;\frac{R&space;H&space;\bar{x}_t&space;&plus;&space;H&space;\bar{P}_t&space;H^\intercal&space;z_t}{H&space;\bar{P}_t&space;H^\intercal&space;&plus;&space;R}&space;$$" title="$$ H\hat{x}_t = \frac{R H \bar{x}_t + H \bar{P}_t H^\intercal z_t}{H \bar{P}_t H^\intercal + R} $$" />
+
+and
+
+<img src="https://latex.codecogs.com/gif.latex?$$&space;H&space;\hat{P}_t&space;H^\intercal&space;=&space;\frac{H&space;\bar{P}_t&space;H^\intercal&space;R}{H&space;\bar{P}_t&space;H^\intercal&space;&plus;&space;R}&space;$$" title="$$ H \hat{P}_t H^\intercal = \frac{H \bar{P}_t H^\intercal R}{H \bar{P}_t H^\intercal + R} $$" />
+
+Solve for <img src="https://latex.codecogs.com/gif.latex?$\hat{x}_t$" title="$\hat{x}_t$" /> and <img src="https://latex.codecogs.com/gif.latex?$\hat{P}_t$" title="$\hat{P}_t$" />:
+
+<img src="https://latex.codecogs.com/gif.latex?$$\begin{aligned}&space;\hat{x}_t&space;&&space;=&space;\frac{R&space;\bar{x}_t&space;&plus;&space;\bar{P}_tH^\intercal&space;z_t}{H\bar{P}_tH^\intercal&space;&plus;&space;R}\\&space;\hat{P}_t&space;&&space;=&space;\frac{\bar{P}_t&space;R}{H\bar{P}_tH^\intercal&space;&plus;&space;R}&space;\end{aligned}$$" title="$$\begin{aligned} \hat{x}_t & = \frac{R \bar{x}_t + \bar{P}_tH^\intercal z_t}{H\bar{P}_tH^\intercal + R}\\ \hat{P}_t & = \frac{\bar{P}_t R}{H\bar{P}_tH^\intercal + R} \end{aligned}$$" />
+
+set
+
+<img src="https://latex.codecogs.com/gif.latex?$$&space;K_t&space;=&space;\frac{\bar{P}_tH^\intercal}{H\bar{P}_tH^\intercal&space;&plus;&space;R}&space;$$" title="$$ K_t = \frac{\bar{P}_tH^\intercal}{H\bar{P}_tH^\intercal + R} $$" />
+
+we can rewrite <img src="https://latex.codecogs.com/gif.latex?\hat{x}_t" title="\hat{x}_t" /> and <img src="https://latex.codecogs.com/gif.latex?\hat{P}_t" title="\hat{P}_t" />:
+
+<img src="https://latex.codecogs.com/gif.latex?$$\begin{aligned}&space;\hat{x}_t&space;&&space;=&space;K_t&space;z_t&space;&plus;&space;(1&space;-&space;HK_t)\bar{x}_t&space;\\&space;&&space;=&space;\bar{x}_t&space;&plus;&space;K_t&space;(z_t&space;-&space;H\bar{x}_t)&space;\\&space;\hat{P}_t&space;&&space;=&space;\bar{P}_t&space;\frac{R}{H\bar{P}_tH^\intercal&space;&plus;&space;R}&space;\\&space;&&space;=&space;(I&space;-&space;K_tH)&space;\bar{P}_t&space;\end{aligned}$$" title="$$\begin{aligned} \hat{x}_t & = K_t z_t + (1 - HK_t)\bar{x}_t \\ & = \bar{x}_t + K_t (z_t - H\bar{x}_t) \\ \hat{P}_t & = \bar{P}_t \frac{R}{H\bar{P}_tH^\intercal + R} \\ & = (I - K_tH) \bar{P}_t \end{aligned}$$" />
+
+
+### Several things to be noted:
+- the posterior variance is the weighted average of prediction variance and measurement variance:
+
+<img src="https://latex.codecogs.com/gif.latex?$$&space;\frac{HPH^\intercal}{HPH^\intercal&space;&plus;&space;R}&space;\text{(real&space;observation)}&space;&plus;&space;\frac{R}{HPH^\intercal&space;&plus;&space;R}&space;\text{(prior&space;observation)}&space;$$" title="$$ \frac{HPH^\intercal}{HPH^\intercal + R} \text{(real observation)} + \frac{R}{HPH^\intercal + R} \text{(prior observation)} $$" />
+
+- the posterior variance is independent of either predicted value or observed value, it only depends on <img src="https://latex.codecogs.com/gif.latex?$R$" title="$R$" /> and <img src="https://latex.codecogs.com/gif.latex?$\bar{P}_t$" title="$\bar{P}_t$" />. So it can be computed before receiving the measurement.
+
+## Reference:
+- Roger R. Labbe, Kalman and Bayesian Filters in Python [Kalman and Bayesian Filters in Python](http://nbviewer.jupyter.org/github/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/table_of_contents.ipynb)
+- Zoubin Ghahramani and Geoffrey, E. Hinton.(1996)  Paramter Estimation for Linear Dynamical Systems.
+
+
+
+
+
+
 
 
 
