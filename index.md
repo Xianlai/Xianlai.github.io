@@ -1,91 +1,126 @@
-Last updated at March-08-2018
+Last updated at August-19-2018
 
 # Contact   
-Email: XianLaaai@gmail.com   
-Cell: 01-917-593-3051   
-Addr: 311 W 55th St, NYC, NY, 10019   
+Email: xian_lai@126.com   
+Cell: 86-159 0115 2972   
+Addr: 百子湾路32号院1号楼，朝阳，北京，100022    
 [Resume](https://github.com/Xianlai/Xianlai.github.io/blob/master/resume.md)  
 
 ___
 # Streaming Tweets Feature Learning with Spark
-[Jump to repository](https://github.com/Xianlai/streaming_tweet_feature_learning)
-
-![](imgs/logos.png)
-#### As the diagram showing above, this project implements a pipeline that learns predictive features from streaming tweets and visualizes the result in real-time:
-
-- **Receive streaming tweets on master machine**:    
-    Running the TweetsListener.py script in the background, a tweets stream with 3 tracks-"NBA", "NFL" and "MBL" are pulled from Tweepy API. Inside this stream, each tweet has a topic about one of those 3 tracks and is seperated by delimiter "><". 
-
-        example raw tweets:  
-        Here's every Tom Brady Postseason TD! #tbt #NFLPlayoffs https://t.co/2CIHBpz2OW...  
-        RT @ChargersRHenne: This guy seems like a class act.  I will root for him  
-        RT @NBA: Kyrie ready! #Celtics #NBALondon https://t.co/KgZVsREGUK...  
-        RT @NBA: The Second @NBAAllStar Voting Returns! https://t.co/urTwnGQNKl...  
-        ...  
-
-- **Analysis tweets on distributed machines**:    
-    This stream is directed into Spark Streaming API through TCP connection and distributed onto cluster. Under the Spark Streaming API, the distrbuted stream is abstracted as a data type called DStream. A series of operations are then applied on this DStream in real time and transform it into other DStreams containing intermediate or final analysis results. 
-    
-    1. preprocess each tweet into a label and a list of clean words which contains only numbers and alphabets.
-    
-        ```
-        example cleaned tweets after preprocessing:   
-        tag:1, words:['rt', 'chargersrhenne', 'this', 'guy', ...],    
-        tag:0, words:['rt', 'debruynekev', 'amp', 'ilkayguendogan', ...],    
-        tag:0, words:['rt', 'commissioner', 'adam', 'silver', ...],    
-        tag:0, words:['rt', 'spurs', 'all', 'star', ...],    
-        tag:0, words:['nbaallstar', 'karlanthony', 'towns', 'nbavote', ...],   
-        ...    
-        ```
-
-    2. count the frequencies of words in all tweets and take the top 5000 most frequent ones as features.
-        
-        ```
-        example word count:  
-        ('rt' , 196)  
-        ('the', 174)  
-        ('in' , 85)  
-        ('for', 62)  
-        ('to' , 59)  
-        ...
-        ```
-
-    3. encode the tweets in last 15 seconds into a structured dataset using features mentioned above.
-    
-        ```
-        example encoded dataset:  
-        tag: 0, features: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...],  
-        tag: 1, features: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...],  
-        tag: 2, features: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...],  
-        tag: 0, features: [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, ...],  
-        tag: 1, features: [0, 0, 1, 0, 0, 0, 1, 1, 1, 1, ...],  
-        ...  
-        ```
-
-    4. calculate the conditional probability given label and the predictiveness of each feature word.
-        
-        ```
-        most predictive word : (cp0, cp1, cp2, pdtn)  
-        allstar     : (0.14835164835164835, 0.0078125, 0.05555555555555555, 249.3439)  
-        alabama     : (0.005494505494505495, 0.140625, 0.05555555555555555, 216.67129)  
-        fitzpatrick : (0.005494505494505495, 0.1328125, 0.05555555555555555, 195.5925333333333)  
-        voting      : (0.12637362637362637, 0.0078125, 0.05555555555555555, 187.45217333333335)  
-        minkah      : (0.005494505494505495, 0.125, 0.05555555555555555, 175.55554999999998)  
-        draft       : (0.016483516483516484, 0.171875, 0.1111111111111111, 149.7176)  
-        ...  
-        ```
-
-- **Visualize results on master machine**:   
-    At last we select the tweets and features with higher predictiveness, collect their label, sum of predictiveness and 2 tsne features back onto the master machine and visualize them as a scatter plot. 
-
-    1. keep only 300 most predictive features and discard other non-predictive features.
-    2. calculate the sum of predictiveness of each word in tweet.
-    3. take 60 tweets with the highest sum of predictiveness under each label.
-    4. apply TSNE learning on these 300 data points to reduce dimentionality from 100 to 2 for visualization.
-    
-    This visualization can be used as an informal way to validate the predictiveness defined above. If the scatter circles of different labels are well seperated, then the features selected by this predictiveness measure are working well.
+# 推特流数据实时特征学习(Spark Streaming)
+[GitHub repository](https://github.com/Xianlai/streaming_tweet_feature_learning)
 
 ![](imgs/tweet_feature_learning.gif)
+
+As the role of big data analysis playing in ecommerce becoming increasingly important, more and more streaming computation systems like Storm, Hadoop are developed trying to satisfy requirements of both time and space efficiency as well as accuracy. 
+
+Among them, Spark Streaming is a great tool for mini-batch real-time streaming analysis running on distributed computing system. Under the Spark Streaming API, the data stream is distributed on many workers and abstracted as a data type called DStream. DStream is essentially a sequence of Resilient Distributed Datasets(RDDs). A series of operations can then applied on this sequence of RDD's in real-time and transform it into other DStreams containing intermediate or final analysis results.
+
+In this project, a life tweets streaming are pulled from Tweeter API. 300 most predictive features words for hashtag classification are learned from this stream using Spark Streaming library in real-time. To validate the learning process, these 300 features are are reduced to a 2-d coordinate system. New tweets are plot on these 2 dimensions as scatter. As more and more tweets  learned by the system, the tweets with same hashtag gradualy aggregate together on this 2-d coordinates which means they are easily separable based on this features.
+
+### I. Receive and clean streaming tweets:  
+### I. 接收和清理推特数据流:
+
+1. Running the [TweetsListener.py](https://github.com/Xianlai/streaming_tweet_feature_learning) script in the background, a tweets stream with any one of 3 tracks-"NBA", "NFL" and "MBL" are pulled from Tweeter API. 
+
+    ```
+    example raw tweets:  
+    Here's every Tom Brady Postseason TD! #tbt #NFLPlayoffs https://t.co/2CIHBpz2OW...  
+    RT @ChargersRHenne: This guy seems like a class act.  I will root for him  
+    RT @NBA: Kyrie ready! #Celtics #NBALondon https://t.co/KgZVsREGUK...  
+    RT @NBA: The Second @NBAAllStar Voting Returns! https://t.co/urTwnGQNKl... 
+    ... 
+    ```
+
+2. Each tweet in the raw tweet stream is then been preprocessed into a label and a list of clean words containing only numbers and alphabets.
+
+    ```
+    example cleaned tweets after preprocessing:   
+    tag:1, words:['rt', 'chargersrhenne', 'this', 'guy', ...],    
+    tag:0, words:['rt', 'debruynekev', 'amp', 'ilkayguendogan', ...],    
+    tag:0, words:['rt', 'commissioner', 'adam', 'silver', ...],    
+    tag:0, words:['rt', 'spurs', 'all', 'star', ...],    
+    tag:0, words:['nbaallstar', 'karlanthony', 'towns', 'nbavote', ...],   
+    ...    
+    ```
+
+3. we will split training and testing data set from clean tweets stream. One third of the tweets are preserved for future result validation. 
+
+
+### II. Feature extraction:    
+### II. 特征抽取: 
+These words are counted and top 5000 most frequent words are collected as features for continue learning.
+        
+    ```
+    example word count:  
+    ('rt' , 196)  
+    ('the', 174)  
+    ('in' , 85)  
+    ('for', 62)  
+    ('to' , 59)  
+    ...
+    ```
+
+
+### III. Feature predictiveness learning
+### III. 特征预测能力值测算: 
+1. encode the cleaned tweets stream into a structured dataset using features mentioned above.
+
+    ```
+    example encoded dataset:  
+    tag: 0, features: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...],  
+    tag: 1, features: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...],  
+    tag: 2, features: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...],  
+    tag: 0, features: [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, ...],  
+    tag: 1, features: [0, 0, 1, 0, 0, 0, 1, 1, 1, 1, ...],  
+    ...  
+    ```
+
+2. calculate the conditional probability given label and the predictiveness of each feature word.
+
+    ```
+    most predictive word : (cp0, cp1, cp2, pdtn)  
+    allstar     : (0.14835164835164835, 0.0078125, 0.05555555555555555, 249.3439)  
+    alabama     : (0.005494505494505495, 0.140625, 0.05555555555555555, 216.67129)  
+    fitzpatrick : (0.005494505494505495, 0.1328125, 0.05555555555555555, 195.5925333333333)  
+    voting      : (0.12637362637362637, 0.0078125, 0.05555555555555555, 187.45217333333335)  
+    minkah      : (0.005494505494505495, 0.125, 0.05555555555555555, 175.55554999999998)  
+    draft       : (0.016483516483516484, 0.171875, 0.1111111111111111, 149.7176)  
+    ...  
+    ```
+
+3. Update feature predictiveness dictionary
+    We are keeping a dictionary of feature words and their corresponding predictiveness.
+
+
+### IV. Validate the learned features on testing tweets
+### IV. 验证所学重要特征的有效性
+To validate whether this feature predictiveness makes sense, we will visualize testing tweets based on the learned most predictive features.
+
+1. Under each label, 60 tweets are selected from the testing tweets. These 180 tweets are encoded as structured dataset using 300 most predictive features selected out of 5000.
+
+    ```
+    0, [1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, ...],151.33585333333332
+    0, [1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, ...],151.33585333333332
+    0, [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ...],143.13223666666667
+    0, [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ...],143.13223666666667
+    0, [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ...],143.13223666666667
+    ```
+
+2. Since the dataset we have are sparse and have binary values, here we use non-linear method t-SNE to learn the 2-d manifold the dataset lies on to obtain x values and y values for our each tweet. The tweets are then visualized as scatter plot. In the scatter, each circle represents a tweet. The color is identified by the tag-NBA tweets will be red, NFL tweets will be blue and MLB ones will be green. The size and alpha of circle is identified by the sum of predictivenesses of each tweet. And the x, y values are 2 dimensions coming out of t-SNE. If the circles of same color are easily distinguishable from the other colors, then the features are effective for classifying this tag.
+
+    ```
+    Total number of tweets:138
+    Number of NBA tweets; NFL tweets; MLB tweets : [60, 60, 18]
+    x     : [ 0.17929186  0.18399966  0.63295108  0.17661807...]
+    y     : [ 0.62392987  0.66881742  0.69876889  0.36454208...]
+    color : ['red', 'red', 'red', 'red'...]
+    tags  : ['nba', 'nba', 'nba', 'nba'...]
+    size  : [0.0042378419396584864, 0.0042378419396584864, 0.0042378419396584864, 0.0042378419396584864...]
+    alpha : [ 0.42378419  0.42378419  0.42378419  0.42378419...]
+    ```
+
 
 ## Files
 - **[tweet_feature_learning_SparkStreaming.ipynb](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_machine_learning_pipeline.ipynb)**  
@@ -97,25 +132,11 @@ ___
 - **[StreamingPlot.py](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/StreamingPlot.py)**  
     This python script implements the streaming plotting class which generate a scatter plotting and keeps updating the plotting with new plotting data source.
 
-- **[logs.txt](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/logs.txt)**   
-    This text file is generated in tweet_feature_learning_SparkStreaming.ipynb to save intermediate and final analysis result.
-
-- **[Spark_overview.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_overview.md)**  
-    This markdown file briefly introduces what is Spark and the functionalities of it.
-
-- **[Spark_installation_guide.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/pyspark_installation_guide.md)**  
-    This markdown file contains guiding steps on how to install Spark, pyspark and how to run them either in the shell or as an application.
-
-- **[Spark_AWS_cluster_guide.md](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_AWS_cluster_guide.md)**  
-    This markdown file contains guiding steps on how to set up a AWS cluster and how to run Spark on it.
-
-- **[Spark_machine_learning_pipeline.ipynb](https://github.com/Xianlai/streaming_tweet_feature_learning/blob/master/Spark_machine_learning_pipeline.ipynb)**  
-    This jupyter notebook implements an example using Spark machine learning API to classify whether online news are popular or not.
-
 
 ___
 # Mahattan Rental Apartment Clustering
-[Jump to repository](https://github.com/Xianlai/Manhattan_rental_apartment_clustering)
+# 曼哈顿出租房源聚类分析
+[GitHub repository](https://github.com/Xianlai/Manhattan_rental_apartment_clustering)
 
 A city functions like a gigantic sophisticate network. Within it each buildings and blocks are connected by visible transportation systems and invisible functional dependencies. On the other hand, the difference of locations and functionality also divides the city into many sub-areas. 
 
@@ -186,7 +207,10 @@ This project is consist of 2 parts:
 
 ___
 # Online News Popularity Classification
-[Jump to repository](https://github.com/Xianlai/online_news_popularity_classification)
+# 在线新闻热度分类
+[GitHub repository](https://github.com/Xianlai/online_news_popularity_classification)
+
+![](imgs/title_image_onp.png)
 
 Facilitated by the fast spreading and developing of internet and smart devices, how can we understand online news browsing data and find the pattern inside it become more and more important.
 
@@ -261,70 +285,153 @@ To limit the size of Jupyter notebooks, I split this project into 2 parts: prepr
 
 
 ___
-# General Tree Search and Visualization
-[Jump to repository](https://github.com/Xianlai/Tree-Search-and-Visualization)
-
-Tree search is one of the most flexible ways to deal with problems that can’t be solved directly and exactly. And an intuitive visualization of the paths found can certainly help us improve both the understanding of problem and solutions. This project implements a Python package that contains general tree search algorithms and result visualizaitons.
+# Tree Search Algorithm and Visualization  
+# 树式搜寻算法和结果可视化
+[GitHub repository](https://github.com/Xianlai/online_news_popularity_classification)
 
 ![](imgs/cover_tree_search.png)
 
-## Modules
-### A. Tree Search:
-The tree search operations like expand node, evaluate state, append new nodes to tree as well as searching strategies like depth first search, breath first search etc. are implemented in the module TreeSearch which is used as the parent class of specific problem. It requires its children class instance to have the following methods:
+Searching is one of the most flexible way to deal with problem that can't be solved directly and exactly. By systematically exploring the state space, we will eventually reach the goal state we are looking for. If what we are interested is the path from initial state to goal state, then we need to save the states and orders we explored in a tree data structure. 
 
-```
-- ProblemInstance._transition(state) 
-    The transition model takes in state and return possible actions, result states and corresponding step costs.
+A wide range of searching algorithms like depth-first search, iterative deepening search, A* search etc. are developed for searching strategy for a long time. However, there is no visualization tools that shows the searching result nicely, intuitively and efficiently. The existing visualization tools of tree structure like plotly which expand the tree down-ward or right-ward are not suitable for the result tree structure of a searching algorithm because:  
 
-- ProblemInstance._heuristicCost(state) 
-    Calculate and return the heuristic cost given a state.
+1. As we know, the number of nodes usually increase exponentially when the searching goes deeper. Thus we will running out of space for the plotting of nodes quickly.  
+2. It is extremely difficult to trace one path from initial state to the goal state for human eyes.
 
-- ProblemInstance._isGoal(state) 
-    Check whether given state is goal state or one of goal states.
-```
+![](imgs/plotly.png)
 
-### B.Tree Visualization:
-In the visualization of result search tree, we use the polar coordinate system inspired by the following ideas:
+This project's goal is to implement a Python package that can be used in tree visualization without above-mentioned problems. The polar coordinate system is ideal for this purpose. In other words, the root node is put in the center of plot figure, then the tree grows outward. As we know, the diameter of a circle increases linearly w.r.t the radius. So we have more space for the nodes at deeper levels. And to increase the readability, each cluster of children nodes sharing the same parent node is centered on their parent and seperated from other clusters.
+![](imgs/cover_tree_search_zoomin.png)
 
-1. As the search tree goes deeper, there are usually more nodes and thus requires more space. The polar coordinate system suits this need with increasing perimenter. So it’s more space efficient for showing the tree structure.
-
-2. Each path from initial node to end node more or less forms a straight line. Thus it’s easier to identify the path and compare between different paths.
+The coloring of the nodes and edges are designed based on searching algorithm as well. The coloring of nodes ranging from green to red are chosen based on their cost. And the edges on paths that leading to the goal state is marked green while the others are left in grey.
 
 
-## How to use the modules
-This package can be used through following API calls:
-```
-- ProblemInstance.breadthFirstSearch(maxNodes, maxLayers)  
-- ProblemInstance.aStarSearch(maxNodes, maxLayers)  
-- other search strategies...  
+## Python Package 
+## Python包
 
-- ProblemInstance.plot_tree(diameter, background, title, ls, a)  
-- ProblemInstance.print_paths()  
-- ProblemInstance.export()  
-```
-See [TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch_and_Visualization.ipynb) for usage examples.
+#### Name: 
+#### 名字：
+tree_search_plot
+
+#### Modules:
+#### 模块：
+- **TreeSearch**  
+    This module implements the general tree search class that performs basic operations like expand node, evaluate state, append new nodes to tree as well as searching strategies like depth first search, breath first search and so on. It should be used as parent class for specific problem instance.
+    And it requires this instance to have the following methods:
+
+    - ProblemInstance._transition(state)
+        The transition model takes in state and return possible actions,  
+        result states and corresponding step costs.
+    - ProblemInstance._heuristicCost(state)
+        Calculate and return the heuristic cost given a state.
+    - ProblemInstance._isGoal(state)
+        Check whether given state is goal state or one of goal states.
+
+    Some abbreviations used in this script:
+    ```
+        gnrt   : Nodes in the same generation or level of tree.
+        clst   : Nodes in the same cluster(children of one parent) of tree.
+        sibl   : A node in a cluster.
+        peerIdx: The index of clst and sibl
+        cousin : A node in other cluster in the same level.
+        niece  : A node in next generation but is not current node's child
+    ```
+    
+    We store the tree in form of a nested list of dictionaries:
+    ```
+        tree   = [gnrt_0, gnrt_1, gnrt_2, ...]
+        gnrt_# = [clst_0, clst_1, clst_2, ...]
+        clst_# = [sibl_0, sibl_1, sibl_2, ...]
+        sibl_# = {
+            'state'      : state of current node, 
+            'pathCost'   : the cost of path up to current node, 
+            'heurist'    : the heurist cost from current node to goal node,
+            'prevAction' : the action transform parent state to this state,
+            'expanded'   : whether this node has been expanded,
+            'gnrt'       : the generation or level in the tree of current node,
+            'clst'       : the cluster index of this node in current generation,
+            'sibl'       : the sibling index of this node in current cluster,
+            'children'   : the indices of children in next generation,
+            'parent'     : [the family index of parent in last gnrt,
+                            the sibling index of parent in last gnrt]
+        }
+    ```
+     
+
+    - _Parameters_:     
+        + initState: the initial state as the root of searching tree. 
+        + show_process: a boolean value. If true, the algorithm will print the intermediate search process on the screen.
+
+    - _Attributes_:
+        + initState: The initial state
+        + n_nodes: The number of nodes in the search tree
+        + n_gnrt: The number of generations/levels in the search tree.  
+        + show: Whether to show progress when searching.  
+        + root: The root node of search tree.  
+        + searchType: The search strategy you choose.  
+        + tree: The whole search tree as a nested list of dictionaries.
+        + paths: All the paths found as a nested list of dictionaries.
+
+    - _Methods_:
+        + breadthFirstSearch(maxNodes=np.inf, maxLayers=np.inf)
+        + depthFirstSearch(maxNodes=np.inf, maxLayers=np.inf)
+        + uniformCostSearch(maxNodes=np.inf, maxLayers=np.inf)
+        + iterativeDeepeningSearch(maxDepth=5)
+        + bestFirstSearch(maxNodes=np.inf, maxLayers=np.inf)
+        + aStarSearch(maxNodes=np.inf, maxLayers=np.inf) 
+        + print_paths()
+        + plot_tree(diameter=10, background='dark', title='search tree', ls='-', a=0.8)
+        + self.export()
+
+
+- **TreeVisual**  
+    This module plots the search tree in a polar coordinates.
+    - _Parameters_:  
+        + diameter: The diameter of the polar fig.
+        + background: The background color.
+    
+    - _Attributes_:
+        + states: All the states in the problem environment 
+        + bgc: The background color of self.fig 
+        + c: The default color for edges and labels  
+        + cm: The color map for nodes' color  
+        + green: The color green used to mark path and goal node labels 
+        + fig: The figure object of plotting.  
+        + ax: The ax object of plotting.  
+        + radius: The radius of polar fig.   
+        + tree: The search tree to be parsed and plot.   
+        + pathNodes: All the nodes on the path as a flat list.  
+        + goal: The goal state.  
+        + vDist: The unit distance in radius direction  
+        + hDist: The unit distance in the tangent direction.  
+        + parsedTree: The parsed tree.
+        
+    - _Methods_:
+        + show() 
+        + save()  
+        + plot_tree(tree, paths, title='search tree', ls='-', a=0.5, show=True)  
+
+For more detail informations about the attributes and methods of these modules, please look at the **Documentations.md** file.
+
+For usage example of this package, please look at the [GitHub repository](https://github.com/Xianlai/online_news_popularity_classification).
 
 
 ## Files
-- **[TreeSearch_and_Visualization.ipynb](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch_and_Visualization.ipynb)**  
-    This jupyter notebook contains the code illustrate how to use TreeSearch object and TreeVisual object to solve specific problem and visualize the result search tree.
-
-- **[Documentations.md](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/Documentations.md)**  
-    This markdown file contains the documentation of TreeSearch, TreeVisual and RoadtripProblem classes.
-
-- **[TreeSearch.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeSearch.py)**  
+- **[TreeSearch.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/tree_search_plot/tree_search_plot/TreeSearch.py)**  
     This python script implements the general tree search algorithms. It includes the basic operations of tree search, like expand downward, trace backup etc, and different search strategies like BFS, DFS, A* etc. It should be used as parent class for specific problem instance.
 
-- **[TreeVisual.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/TreeVisual.py)**  
+- **[TreeVisual.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/tree_search_plot/tree_search_plot/TreeVisual.py)**  
     This python script implements the class to visualize the result search tree. It includes the methods to parse the search tree in order to get plot data and the methods to plot the tree based on the attributes of its nodes like whether is goal node or whether is path. 
 
 - **[RoadtripProblem.py](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/RoadtripProblem.py)**  
     This python script implements an example problem of finding the best route in Romania to show the functions of its parent class--TreeSearch class.
 
-![](imgs/breadth_first_search_light_background.png)
+- **[Documentations.md](https://github.com/Xianlai/Tree-Search-and-Visualization/blob/master/Documentations.md)**  
+    This markdown file contains the documentation of TreeSearch, TreeVisual and RoadtripProblem classes.
 
 
 # Filters and Kalman Filter learning notes
+# 滤波器和卡尔曼滤波器__学习笔记
 
 ### What are filters?
 Filters are a kind of network models that incorporate the **certainty(our knowledge) and uncertainty(the noise in real world)** of our **belief and observation** for a dynamic system in a sequence of time steps. 
@@ -518,13 +625,4 @@ we can rewrite <img src="https://latex.codecogs.com/gif.latex?\hat{x}_t" title="
 ## Reference:
 - Roger R. Labbe, Kalman and Bayesian Filters in Python [Kalman and Bayesian Filters in Python](http://nbviewer.jupyter.org/github/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/table_of_contents.ipynb)
 - Zoubin Ghahramani and Geoffrey, E. Hinton.(1996)  Paramter Estimation for Linear Dynamical Systems.
-
-
-
-
-
-
-
-
-
 
