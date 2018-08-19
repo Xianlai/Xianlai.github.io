@@ -1,7 +1,9 @@
+Last updated at August-19-2018
+
 # Contact   
 Email: xian_lai@126.com   
-Cell: 86-159 0115 2972
-Addr: 百子湾路32号院1号楼，朝阳，北京，100022
+Cell: 86-159 0115 2972   
+Addr: 百子湾路32号院1号楼，朝阳，北京，100022    
 [Resume](https://github.com/Xianlai/Xianlai.github.io/blob/master/resume.md)  
 
 ___
@@ -208,6 +210,8 @@ ___
 # 在线新闻热度分类
 [GitHub repository](https://github.com/Xianlai/online_news_popularity_classification)
 
+![](imgs/title_image_onp.png)
+
 Facilitated by the fast spreading and developing of internet and smart devices, how can we understand online news browsing data and find the pattern inside it become more and more important.
 
 In this project I am using online news popularity data set containing 39644 news articles and 57 features about each article including statistical features like number of words in title, rate of non-stop words in the content, article publish weekdays etc. and NLP features like positive word rate, title subjectivity level etc. The goal is to classify whether these articles are popular or not quantified by article shares. 
@@ -285,6 +289,8 @@ ___
 # 树式搜寻算法和结果可视化
 [GitHub repository](https://github.com/Xianlai/online_news_popularity_classification)
 
+![](imgs/cover_tree_search.png)
+
 Searching is one of the most flexible way to deal with problem that can't be solved directly and exactly. By systematically exploring the state space, we will eventually reach the goal state we are looking for. If what we are interested is the path from initial state to goal state, then we need to save the states and orders we explored in a tree data structure. 
 
 A wide range of searching algorithms like depth-first search, iterative deepening search, A* search etc. are developed for searching strategy for a long time. However, there is no visualization tools that shows the searching result nicely, intuitively and efficiently. The existing visualization tools of tree structure like plotly which expand the tree down-ward or right-ward are not suitable for the result tree structure of a searching algorithm because:  
@@ -292,10 +298,10 @@ A wide range of searching algorithms like depth-first search, iterative deepenin
 1. As we know, the number of nodes usually increase exponentially when the searching goes deeper. Thus we will running out of space for the plotting of nodes quickly.  
 2. It is extremely difficult to trace one path from initial state to the goal state for human eyes.
 
-![](images/plotly.png)
+![](imgs/plotly.png)
 
 This project's goal is to implement a Python package that can be used in tree visualization without above-mentioned problems. The polar coordinate system is ideal for this purpose. In other words, the root node is put in the center of plot figure, then the tree grows outward. As we know, the diameter of a circle increases linearly w.r.t the radius. So we have more space for the nodes at deeper levels. And to increase the readability, each cluster of children nodes sharing the same parent node is centered on their parent and seperated from other clusters.
-![](images/cover_tree_search_zoomin.png)
+![](imgs/cover_tree_search_zoomin.png)
 
 The coloring of the nodes and edges are designed based on searching algorithm as well. The coloring of nodes ranging from green to red are chosen based on their cost. And the edges on paths that leading to the goal state is marked green while the others are left in grey.
 
