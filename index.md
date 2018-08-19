@@ -4,7 +4,7 @@ Last updated at August-19-2018
 Email: xian_lai@126.com   
 Cell: 86-159 0115 2972   
 Addr: 百子湾路32号院1号楼，朝阳，北京，100022    
-[Resume](https://github.com/Xianlai/Xianlai.github.io/blob/master/resume.md)  
+[Resume](https://github.com/Xianlai/Xianlai.github.io/blob/master/简历_赖献.pdf)  
 
 ___
 # Streaming Tweets Feature Learning with Spark
