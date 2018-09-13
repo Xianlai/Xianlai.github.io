@@ -150,7 +150,7 @@ Right hand side of figure shows the weights of all memory slots when performing 
 ### VI. Conclusion
 ### VI. 结论
 
-In this paper we evaluated 3 types of RNN models for multivariate arrival process learning. They incorporate the time series data of all geospatial locations and learn the relationship between them by encoding them as small number of hidden variables. Although we only used them to predict one location in experiments, the models can be used to predict the arrival rates of any number of locations without modification. Among them, the models with LSTM cells are most stable and give the most accurate predictions due to the protection of gate components. The noise in inputs are filtered away when they go through the gates and the cell state has more clear periodicity comparing to other models.
+In this study we evaluated 3 types of RNN models for multivariate arrival process learning. They incorporate the time series data of all geospatial locations and learn the relationship between them by encoding them as small number of hidden variables. Although we only used them to predict one location in experiments, the models can be used to predict the arrival rates of any number of locations without modification. Among them, the models with LSTM cells are most stable and give the most accurate predictions due to the protection of gate components. The noise in inputs are filtered away when they go through the gates and the cell state has more clear periodicity comparing to other models.
 
 ___
 
