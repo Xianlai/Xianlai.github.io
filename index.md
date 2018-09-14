@@ -441,7 +441,7 @@ Here we see the mean AUC of some criteria are higher than the others. And some o
 
 After sorting by the mean combined score on 100 samplings, we can clearly see some models outperform the others. 
 
-![](images/model_performance.png)
+![](imgs/mhn_apt_clustering/model_performance.png)
 
 ```python
 [{'rad': 0.05, 'method': 'complete', 'IDWpower': 0.5, 'metric': 'cityblock'},
